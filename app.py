@@ -1,7 +1,10 @@
 import mysql.connector
 from mysql.connector import Error
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Response
 from typing import Annotated, Any
+
+response.set_cookie(key="session", value="kattyperritaxdclaudeiamejorquechatgpt")
+
 
 app=FastAPI(title='FastAPI CRUD API')
 
@@ -29,6 +32,16 @@ def create_connection(host, user, password, database):
             return conn
     except Error as e:
         print(f'Error de conexion: {e}')
+
+@app.post('/login')
+def login(db:db_dependency, username:str, password:str, role:str):
+    try:
+        cursor=db.cursor()
+        cursor.execute(f"INSERT INTO users(username, password, role) VALUES('{username}', '{password}', '{role}')")
+        db.commit()
+        return {'Message': 'Bienvenido de nuevo {username}', 'role': '{role}'}
+    except Error as e:
+        return {'error': str(e)}
 
 @app.post('/users')
 def insert_students(db:db_dependency, id_estudiante:int, nombre_estudiante:str, apellido_estudiante:str, id_grado:int, seccion:str):
